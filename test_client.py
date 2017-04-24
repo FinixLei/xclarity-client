@@ -10,8 +10,17 @@ def main():
                       password='Passw0rd',
                       url='https://10.240.197.84')
 
-    print('power status: %s' % c.get_node_power_status(node_id))
-    pprint(c.get_node_boot_info(node_id))
+    try:
+        print('node status: %s' % c.get_node_status(node_id))
+        print('power status: %s' % c.get_node_power_status(node_id))
+        print('boot info: ')
+        pprint(c.get_node_boot_info(node_id))
+
+        # print('Powering on the node...')
+        # c.set_node_power_status(node_id, 'powerOn')
+        # print('power status: %s' % c.get_node_power_status(node_id))
+    except Exception as ex:
+        print("Error: %s" % str(ex))
 
 
 if __name__ == '__main__':
