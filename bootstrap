@@ -18,7 +18,7 @@ NAME=$(basename $(cd $(dirname $0); /bin/pwd))
 VENV=virtualenv
 
 
-#begin processing
+# Begin processing
 
 here=$(cd $(dirname $0); /bin/pwd)
 venv_dir=$here/.venv-xclarity-client
@@ -28,11 +28,6 @@ pip="$bin_dir/pip install -r"
 venv_name=$(basename $venv_dir)
 venv_name=${venv_name#.venv-}
 
-echo "here: $here"
-echo "venv_dir: ${venv_dir}"
-echo "bin_dir: ${bin_dir}"
-echo "activate: $activate"
-echo "pip: $pip"
 
 if [ ! -f "$activate" ]
 then
@@ -63,4 +58,3 @@ echo To deactivate, run
 echo "    deactivate"
 echo
 echo Read the README for instructions on configuration
-
