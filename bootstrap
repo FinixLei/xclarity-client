@@ -1,0 +1,66 @@
+#!/bin/bash 
+# bootstrap
+# =========
+#
+# Usage:  bootstrap
+#
+# Creates a new virtualenv named .venv-xclarity-client, and installs all the
+# runtime and devtime dependencies.
+#
+#
+
+die() {
+    echo "$*"
+    exit 1
+}
+
+NAME=$(basename $(cd $(dirname $0); /bin/pwd))
+VENV=virtualenv
+
+
+#begin processing
+
+here=$(cd $(dirname $0); /bin/pwd)
+venv_dir=$here/.venv-xclarity-client
+bin_dir=$venv_dir/bin
+activate=$bin_dir/activate
+pip="$bin_dir/pip install -r"
+venv_name=$(basename $venv_dir)
+venv_name=${venv_name#.venv-}
+
+echo "here: $here"
+echo "venv_dir: ${venv_dir}"
+echo "bin_dir: ${bin_dir}"
+echo "activate: $activate"
+echo "pip: $pip"
+
+if [ ! -f "$activate" ]
+then
+    venv_args="--prompt=($venv_name) $venv_dir"
+    if [ -n "`whereis $VENV`" ]
+    then
+        $VENV $venv_args || die "Could not create virtualenv"
+    else
+        die "Please install virtualenv first. "
+    fi
+fi
+
+echo "Start to install dependencies..."
+$pip requirements.pip || die "Could not install main dependencies. See ~/.pip/pip.log"
+echo "End of installation of dependencies. "
+
+local_link=activate-$venv_name
+ln -nsf $activate $here/$local_link
+
+echo
+echo ==================================================
+echo
+echo Dependencies installed to:  $venv_dir
+echo Activate the virtualenv by running:
+echo "    source $local_link"
+echo
+echo To deactivate, run
+echo "    deactivate"
+echo
+echo Read the README for instructions on configuration
+
