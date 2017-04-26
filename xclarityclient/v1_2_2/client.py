@@ -2,8 +2,7 @@ import json
 import requests
 from .power_status import power_status_list, power_status_action
 from .boot_order import boot_order_priority
-from ..exceptions import NodeDetailsException, BadPowerStatusSettingException, \
-    FailToSetPowerStatusException
+from ..exceptions import *
 
 
 requests.packages.urllib3.disable_warnings()
