@@ -2,6 +2,8 @@ import json
 import requests
 from .power_status import power_status_list, power_status_action
 from .boot_order import boot_order_priority
+from ..exceptions import XClarityClientException, NodeDetailsException, \
+    BadRequestException, FailToSetPowerStatusException
 
 
 requests.packages.urllib3.disable_warnings()
@@ -17,8 +19,11 @@ class Client(object):
         self._url = url[:-1] if url is not None and url[-1] == '/' \
             else url
 
-    def _get_node_details(self, uuid):
-        url = '{url}/node/{node_id}'.format(url=self._url, node_id=uuid)
+    def _gen_node_action_url(self, node_id):
+        return '{url}/node/{node_id}'.format(url=self._url, node_id=node_id)
+
+    def _get_node_details(self, node_id):
+        url = self._gen_node_action_url(node_id)
         try:
             r = requests.get(url,
                              auth=(self._username, self._password),
@@ -32,27 +37,27 @@ class Client(object):
             }
             return result
         except Exception as ex:
-            print("Exception: {ex}".format(ex=ex))
+            NodeDetailsException(message=str(ex), node_id=node_id)
 
-    def get_node_status(self, uuid):
-        response = self._get_node_details(uuid)
+    def get_node_status(self, node_id):
+        response = self._get_node_details(node_id)
         if response['status_code'] == 200:
             return response['body']['accessState'].lower()
         else:
             return 'unknown'
 
-    def get_node_power_status(self, uuid):
-        response = self._get_node_details(uuid)
+    def get_node_power_status(self, node_id):
+        response = self._get_node_details(node_id)
         if response['status_code'] == 200:
             return power_status_list[response['body']['powerStatus']]
         else:
             return 'unknown'
 
-    def set_node_power_status(self, uuid, action):
+    def set_node_power_status(self, node_id, action):
         if action not in power_status_action:
-            raise Exception('Bad Request: no such action: %s' % action)
+            raise BadRequestException(action=action)
 
-        url = '{url}/node/{node_id}'.format(url=self._url, node_id=uuid)
+        url = self._gen_node_action_url(node_id)
         data = {'powerState': action}
         r = requests.put(url,
                          auth=(self._username, self._password),
@@ -60,11 +65,10 @@ class Client(object):
                          verify=False)
 
         if r.status_code != 200:
-            raise Exception('Failed to set node %s power status %s'
-                            % (uuid, action))
+            raise FailToSetPowerStatusException(node_id=node_id, action=action)
 
-    def get_node_boot_info(self, uuid):
-        response = self._get_node_details(uuid)
+    def get_node_boot_info(self, node_id):
+        response = self._get_node_details(node_id)
         if response['status_code'] == 200:
             boot_order_list = response['body']['bootOrder']['bootOrderList']
 
