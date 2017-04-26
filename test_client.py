@@ -17,23 +17,25 @@ def main():
         print('boot info: ')
         pprint(c.get_node_boot_info(node_id))
 
-        # print('Setting power status...')
-        # c.set_node_power_status(node_id, 'powerOn')
-        # print('power status: %s' % c.get_node_power_status(node_id))
+        print('Setting power status...')
+        c.set_node_power_status(node_id, 'POWER_ON')
+        print('power status: %s' % c.get_node_power_status(node_id))
 
         if False:
             c.set_node_power_status(node_id, 'OnOn')
-        if True:
+        if False:
             raise exceptions.NodeDetailsException(node_id=node_id, detail="Just Error!!!")
+        if False:
+            raise exceptions.FailToSetPowerStatusException(node_id=node_id, action='PowerOn')
 
-    except exceptions.BadRequestException as ex:
+    except exceptions.BadPowerStatusSettingException as ex:
         print(ex.get_message())
     except exceptions.NodeDetailsException as ex:
         print(ex.get_message())
     except exceptions.FailToSetPowerStatusException as ex:
         print(ex.get_message())
     except Exception as ex:
-        print("Error: %s" % str(ex))
+        print("Unknown Exception: %s" % str(ex))
 
 
 if __name__ == '__main__':

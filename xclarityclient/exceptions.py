@@ -32,17 +32,18 @@ class XClarityClientException(Exception):
         super(XClarityClientException, self).__init__(message)
 
     def get_message(self):
-        # The first argument to XClarityClientException message,
-        # it should be message (see __init__)
         return self.message
+
+    def get_code(self):
+        return self.code
 
 
 class NodeDetailsException(XClarityClientException):
     msg_fmt = 'Failed to get the details of node %(node_id)s: %(detail)s'
 
 
-class BadRequestException(XClarityClientException):
-    msg_fmt = 'Bad Request: %(action)s'
+class BadPowerStatusSettingException(XClarityClientException):
+    msg_fmt = 'Bad PowerStatus setting: %(action)s'
     code = 400
 
 

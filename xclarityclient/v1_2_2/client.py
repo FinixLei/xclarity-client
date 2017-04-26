@@ -2,8 +2,8 @@ import json
 import requests
 from .power_status import power_status_list, power_status_action
 from .boot_order import boot_order_priority
-from ..exceptions import XClarityClientException, NodeDetailsException, \
-    BadRequestException, FailToSetPowerStatusException
+from ..exceptions import NodeDetailsException, BadPowerStatusSettingException, \
+    FailToSetPowerStatusException
 
 
 requests.packages.urllib3.disable_warnings()
@@ -55,7 +55,8 @@ class Client(object):
 
     def set_node_power_status(self, node_id, action):
         if action not in power_status_action:
-            raise BadRequestException(action=action)
+            raise BadPowerStatusSettingException(action=action)
+        action = power_status_action[action]
 
         url = self._gen_node_action_url(node_id)
         data = {'powerState': action}
