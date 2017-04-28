@@ -1,7 +1,7 @@
 import json
 import requests
 from .power_status import power_status_list, power_status_action
-from .boot_order import boot_order_priority
+from .boot_order import boot_order_priority, setting_boot_type
 from ..exceptions import *
 
 
@@ -67,6 +67,11 @@ class Client(object):
         if r.status_code != 200:
             raise FailToSetPowerStatusException(node_id=node_id, action=action)
 
+    def get_node_all_boot_info(self, node_id):
+        response = self._get_node_details(node_id)
+        if response['status_code'] == 200:
+            return {'bootOrder': response['body']['bootOrder']}
+
     def get_node_boot_info(self, node_id):
         response = self._get_node_details(node_id)
         if response['status_code'] == 200:
@@ -88,3 +93,19 @@ class Client(object):
 
         else:
             return None
+
+    def set_node_boot_info(self, node_id, boot_order):
+        # for item in boot_order['bootOrder']['bootOrderList']:
+        #     if item['bootType'] in setting_boot_type:
+        #         item['bootType'] = setting_boot_type[item['bootType']]
+
+        try:
+            url = self._gen_node_action_url(node_id)
+            r = requests.put(url,
+                             auth=(self._username, self._password),
+                             data=json.dumps(boot_order),
+                             verify=False)
+            if r.status_code != 200:
+                raise Exception("Fail to set node boot info. status code = %s" % r.status_code)
+        except Exception as ex:
+            print("Exception! - %s" % str(ex))

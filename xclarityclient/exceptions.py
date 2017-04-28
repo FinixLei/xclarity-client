@@ -49,3 +49,7 @@ class BadPowerStatusSettingException(XClarityClientException):
 
 class FailToSetPowerStatusException(XClarityClientException):
     msg_fmt = 'Failed to set the power status of node %(node_id)s: %(action)s'
+
+
+class FailToSetBootInfoException(XClarityClientException):
+    msg_fmt = 'Failed to set boot info for node %(node_id)s.'
