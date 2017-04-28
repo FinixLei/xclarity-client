@@ -45,6 +45,40 @@ class Client(object):
         else:
             return 'unknown'
 
+    def get_node_info(self, node_id):
+        response = self._get_node_details(node_id)
+        info = {}
+        if response['status_code'] == 200:
+            body = response['body']
+            info['uuid'] = body.get('uuid', None)
+            info['name'] = body.get('hostname', 'Unknown')
+            info['power_state'] = power_status_list.get(
+                body.get('powerStatus', 0), 0)
+
+            info['chassis_id'] = None  # nullable
+            info['target_power_state'] = None  # nullable
+            info['provision_state'] = None   # nullable
+            info['target_provision_state'] = None  # nullable
+            info['provision_updated_at'] = None  # nullable
+            info['last_error'] = None  # nullable
+            info['instance_uuid'] = None  # nullable
+            info['instance_info'] = None  # nullable
+
+            info['raid_config'] = body.get('raidSettings', [])  # An array
+            info['target_raid_config'] = []
+            info['maintenance'] = False \
+                if body.get('accessState', 'unknown') == 'online' else True
+            info['maintenance_reason'] = None  # nullable
+            info['console_enabled'] = False  # False is by default, what's this
+            info['extra'] = {}  # What's this?
+            info['properties'] = {}  # What's this?
+        else:
+            err_msg = "Fail to get node info, http status code is %s, " \
+                      "http response is %s" % (response.status_code, response.content)
+            raise NodeDetailsException(node_id=node_id, details=err_msg)
+
+        return info
+
     def get_node_power_status(self, node_id):
         response = self._get_node_details(node_id)
         if response['status_code'] == 200:

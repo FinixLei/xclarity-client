@@ -20,6 +20,12 @@ def test_get_node_status(c, node_id):
 
 
 @show_delimiter
+def test_get_node_info(c, node_id):
+    print('Detailed node info: ')
+    pprint(c.get_node_info(node_id))
+
+
+@show_delimiter
 def test_get_node_power_status(c, node_id):
     node_power_status = c.get_node_power_status(node_id)
     print('power status: %s' % node_power_status)
@@ -142,6 +148,7 @@ def main():
                       password='Passw0rd',
                       url='https://10.240.197.84')
 
+    test_get_node_info(c, node_id)
     test_get_node_status(c, node_id)
     test_get_node_all_boot_info(c, node_id)
     test_get_node_boot_info(c, node_id)
