@@ -62,6 +62,15 @@ def test_fail_to_set_power_status_exception(node_id):
 
 
 @show_delimiter
+def test_fail_to_set_boot_info_exception(node_id):
+    try:
+        raise exceptions.FailToSetBootInfoException(node_id=node_id)
+    except exceptions.FailToSetBootInfoException as ex:
+        print('Got FailToSetBootInfoException: %s, its code is %s. '
+              % (ex.get_message(), ex.get_code()))
+
+
+@show_delimiter
 def test_bad_power_status_setting_exception(c, node_id):
     try:
         c.set_node_power_status(node_id, 'OnOn')
@@ -138,10 +147,13 @@ def main():
     test_get_node_boot_info(c, node_id)
     # test_set_node_boot_info(c, node_id)  # Time cost operation
 
+    # Test Exceptions
     test_node_details_exception(node_id)
     test_fail_to_set_power_status_exception(node_id)
     test_bad_power_status_setting_exception(c, node_id)
+    test_fail_to_set_boot_info_exception(node_id)
 
+    # Test Power Status
     power_status = test_get_node_power_status(c, node_id)
     if False:  # Time cost operation
         if power_status == 'off':
