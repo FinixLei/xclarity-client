@@ -16,5 +16,5 @@ def import_class(import_str):
 def Client(version=None, username=None, password=None, url=None):
     version = version.lower().replace('xclarity_', '')
     version_mod_name = 'v%s' % version.replace('.', '_')
-    c = import_class("xclarityclient.%s.client.Client" % version_mod_name)
+    c = import_class("xclarity_client.%s.client.Client" % version_mod_name)
     return c(version=version, username=username, password=password, url=url)

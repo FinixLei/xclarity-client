@@ -1,7 +1,7 @@
 from functools import wraps
 from pprint import pprint
-from xclarityclient import client
-from xclarityclient import exceptions
+from xclarity_client import client
+from xclarity_client import exceptions
 
 
 def show_delimiter(fn):
